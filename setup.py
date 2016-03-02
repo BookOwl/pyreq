@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="pyreq",
-    version="1.0.0",
+    version="1.0.1",
     
     description='A console based http client',
     long_description=open("README.rst").read(),
