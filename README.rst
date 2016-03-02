@@ -6,9 +6,8 @@ It allows you to use most HTTP verbs, send arbitrary data along with the request
 It also automaticly pretty-prints JSON, which is very useful for exploring APIs.
 
 
-To install, just run the following command:
+To install, just run the following command: ::
 
-::
 	pip install pyreq
 
 You can get a list of all options and what they mean by running::
