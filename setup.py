@@ -3,9 +3,9 @@ from setuptools import setup
 
 setup(
     name="pyreq",
-    version="1.0.1",
+    version="1.1.0",
     
-    description='A console based http client',
+    description='A console based http client with syntax higlighting',
     long_description=open("README.rst").read(),
 
     url="https://github.com/BookOwl/pyreq",
@@ -28,7 +28,7 @@ setup(
         ],
     keywords='web http https curl',
 
-    install_requires=["requests>=2.8,<3",],
+    install_requires=["requests>=2.8,<3", "colorama>=0.3", "pygments>=2.1",],
 
     py_modules=["pyreq"],
 
