@@ -15,7 +15,8 @@ def echo(arg):
 
 def main():
     global args
-    parser = argparse.ArgumentParser(prog="pyreq")
+    parser = argparse.ArgumentParser(prog="pyreq",
+                                     epilog="See https://github.com/BookOwl/pyreq for more info")
 
     parser.add_argument("url", help="The URL to download")
 
@@ -43,6 +44,17 @@ def main():
                        action="store_false")
     parser.add_argument("-c", "--no-color", help="Don't use color.",
                        action="store_true")
+    parser.add_argument("-a", "--auth",
+                        default=[],
+                        help="Username and password to authenticate with",
+                        metavar=("USERNAME", "PASSWORD"),
+                        nargs=2)
+    parser.add_argument("-n", "--no-headers",
+                        help="Don't show response headers",
+                        action="store_true")
+    parser.add_argument("-V", "--version", help="Show version",
+                        action='version', version='%(prog)s 1.2.0')
+                        
 
     args = parser.parse_args()
 
@@ -52,12 +64,13 @@ def main():
                              args.url,
                              params=eval(args.params),
                              data=eval(args.data),
+                             auth=tuple(args.auth),
                              )
     except Exception as e:
         print("ERROR!", e)
         sys.exit(1)
-
-    cont_type = r.headers['Content-Type'].split("/")
+        
+    cont_type = r.headers['Content-Type'].split(";")[0].split("/")
     if not args.no_color:
         if r.status_code >= 200 and r.status_code < 300: color = Back.GREEN
         elif r.status_code >= 300 and r.status_code < 400: color = Back.YELLOW
@@ -65,7 +78,11 @@ def main():
         else: color = ""
         status = "%s%s%s %s %s %s" % (Style.BRIGHT, color, Fore.WHITE, r.status_code, r.reason, Style.RESET_ALL)
         print("HTTP Status:", status)
-
+        if not args.no_headers:
+            echo("Response Headers:")
+            for (k, v) in sorted(r.headers.items()):
+                echo("%s = %s" % (k, v))
+            echo("\nResponse content:")
         try:
             lexer = lexers.get_lexer_for_mimetype(r.headers['Content-Type'].split(";")[0])
         except util.ClassNotFound:
@@ -81,6 +98,11 @@ def main():
                     formatters.get_formatter_by_name("console")))
     else:
         print("HTTP Status:", r.status_code, r.reason)
+        if not args.no_headers:
+            echo("Response Headers:")
+            for (k, v) in sorted(r.headers.items()):
+                echo("%s = %s" % (k, v))
+            echo("\nResponse content:")
         if cont_type[1] == "json":
             echo(json.dumps(r.json(), indent=4))
 
